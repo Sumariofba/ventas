@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VICMO ELECTRODOMESTICOS - Catálogo</title>
+  
+  <!-- Librerías CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-light: #1e293b;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --whatsapp: #25d366;
+      --whatsapp-hover: #128c7e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px;
+    }
+
+    /* Encabezado Web Principal */
+    header {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      padding: 30px 40px;
+      border-radius: 16px;
+      margin-bottom: 25px;
+      box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .header-logo-img {
+      height: 85px;
+      width: auto;
+      object-fit: contain;
+      background: transparent;
+      border-radius: 8px;
+    }
+
+    .header-titles h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .header-titles p {
+      color: #94a3b8;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    /* Panel de Control */
+    .controls-panel {
+      background: var(--card-bg);
+      padding: 20px 25px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 25px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 12px 22px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-outline {
+      background-color: #f1f5f9;
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      background-color: #e2e8f0;
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #059669;
+    }
+
+    .btn-whatsapp {
+      background-color: var(--whatsapp);
+      color: white;
+    }
+
+    .btn-whatsapp:hover {
+      background-color: var(--whatsapp-hover);
+    }
+
+    .whatsapp-input-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .whatsapp-input-group input {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      width: 150px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    /* Filtros y Búsqueda */
+    .filter-section {
+      margin-bottom: 25px;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      margin-bottom: 15px;
+      outline: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .search-box:focus {
+      border-color: var(--accent);
+    }
+
+    .categories-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      padding: 9px 18px;
+      border-radius: 20px;
+      background-color: #e2e8f0;
+      color: var(--text-muted);
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background-color: var(--accent);
+      color: white;
+    }
+
+    /* Catálogo Web */
+    .category-section {
+      margin-bottom: 30px;
+    }
+
+    .category-header {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+      border-bottom: 3px solid var(--accent);
+      text-transform: uppercase;
+    }
+
+    .catalog-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .product-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: calc(33.333% - 14px);
+      min-width: 250px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+
+    .img-container {
+      width: 100%;
+      height: 180px;
+      background-color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .img-container img {
+      max-width: 90%;
+      max-height: 90%;
+      width: auto;
+      height: auto;
+      display: block;
+      margin: auto;
+      object-fit: contain;
+    }
+
+    .no-img {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .card-body {
+      padding: 12px 15px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .product-code {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .product-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.25;
+    }
+
+    .product-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      white-space: pre-line;
+      flex-grow: 1;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .price-tag {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    .card-footer {
+      padding: 10px 12px;
+      background-color: #f8fafc;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .btn-jpg {
+      width: 100%;
+      justify-content: center;
+      background-color: #0f172a;
+      color: white;
+      font-size: 0.8rem;
+      padding: 8px;
+    }
+
+    .btn-jpg:hover {
+      background-color: #334155;
+    }
+
+    .btn-card-wa {
+      width: 100%;
+      justify-content: center;
+      font-size: 0.82rem;
+      padding: 8px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 12px;
+      border: 2px dashed var(--border);
+    }
+
+    #pdfLoadingModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.88);
+      z-index: 9999;
+      color: white;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    .spinner {
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <header id="mainHeader">
+    <div class="header-brand">
+      <img id="companyLogo" class="header-logo-img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgMTAwIiB3aWR0aD0iMzAwIiBoZWlnaHQ9IjEwMCI+CiAgPHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIxMiIgZmlsbD0iIzBmMTcyYSIvPgogIDwhLS0gU3ltYm9sIEljb24gLS0+CiAgPHBhdGggZD0iTSAzMCAyNSBMIDU1IDc1IEwgODAgMjUgTCA2OCAyNSBMIDU1IDUyIEwgNDIgMjUgWiIgZmlsbD0iIzI1NjNlYiIvPgogIDxwYXRoIGQ9Ik0gNTUgMjUgTCA4MCA3NSBMIDEwNSAyNSBMIDkzIDI1IEwgODAgNTIgTCA2NyAyNSBaIiBmaWxsPSIjMzhiZGZjIi8+CiAgPCEtLSBUZXh0IC0tPgogIDx0ZXh0IHg9IjEyMCIgeT0iNTIiIGZvbnQtZmFtaWx5PSInU2Vnb2UgVUknLCBSb2JvdG8sIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzIiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNmZmZmZmYiIGxldHRlci1zcGFjaW5nPSIyIj5WSUNNTTwvdGV4dD4KICA8dGV4dCB4PSIxMjIiIHk9IjcyIiBmb250LWZhbWlseT0iJ1NlZ29lIFVJJywgUm9ib3RvLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iNjAwIiBmaWxsPSIjOTRhM2I4IiBsZXR0ZXItc3BhY2luZz0iMSI+RUxFQ1RST0RPTUVTVElDT1M8L3RleHQ+Cjwvc3ZnPg==" alt="VICMO Logo">
+      <div class="header-titles">
+        <h1>VICMO ELECTRODOMÉSTICOS</h1>
+        <p>Catálogo Oficial de Productos y Artículos del Hogar</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="controls-panel">
+    <div class="file-input-wrapper">
+      <label for="excelFile" class="btn btn-primary">
+        📂 Cargar Archivo Excel (.xlsx)
+      </label>
+      <input type="file" id="excelFile" accept=".xlsx, .xls" onchange="processExcel(this)">
+      
+      <label for="logoFile" class="btn btn-outline">
+        🖼️ Cambiar Logo
+      </label>
+      <input type="file" id="logoFile" accept="image/*" onchange="updateLogo(this)">
+
+      <div class="whatsapp-input-group">
+        <span>📲 WhatsApp Pedidos:</span>
+        <input type="text" id="waPhoneInput" value="5491112345678" placeholder="Ej: 5491112345678">
+      </div>
+    </div>
+
+    <span id="fileName" style="font-size: 0.9rem; color: var(--text-muted);">No se ha seleccionado archivo</span>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <button class="btn btn-primary" onclick="exportCategoryJPGsZip()">📦 Descargar JPGs Lote (.zip)</button>
+      <button class="btn btn-whatsapp" onclick="exportOnlineCatalogHTML()">🌐 Compartir / Exportar Catálogo Web (.html)</button>
+      <button class="btn btn-success" onclick="exportToPDF()">📄 Descargar Catálogo PDF</button>
+    </div>
+  </div>
+
+  <div class="filter-section" id="filterSection" style="display: none;">
+    <input type="text" id="searchInput" class="search-box" placeholder="Buscar por código, nombre o descripción..." oninput="filterProducts()">
+    <div class="categories-tabs" id="categoriesTabs"></div>
+  </div>
+
+  <div id="catalogContainer">
+    <div class="empty-state">
+      <h3>Carga tu archivo Excel para generar el catálogo</h3>
+      <p>Selecciona tu lista de precios (VICMO ELECTRODOMESTICOS.xlsx)</p>
+    </div>
+  </div>
+
+  <div id="pdfLoadingModal">
+    <div class="spinner"></div>
+    <div id="pdfLoadingText">Generando contenido...</div>
+  </div>
+
+  <script>
+    let rawCatalogData = [];
+    let activeCategory = 'TODAS';
+    let sheetImagesMap = {};
+    let customLogoBase64 = document.getElementById('companyLogo').src;
+
+    function updateLogo(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        customLogoBase64 = e.target.result;
+        document.getElementById('companyLogo').src = customLogoBase64;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function parseValidPrice(val) {
+      if (typeof val === 'number') return val > 0 ? val : null;
+      if (!val) return null;
+      let str = String(val).trim();
+      if (str.toUpperCase().includes('SIN STOCK')) return null;
+      
+      str = str.replace(/[\$\s]/g, '');
+      if (str.includes(',') && str.includes('.')) {
+        str = str.replace(/\./g, '').replace(',', '.');
+      } else if (str.includes(',')) {
+        str = str.replace(',', '.');
+      }
+      const num = parseFloat(str);
+      return (!isNaN(num) && num > 0) ? num : null;
+    }
+
+    function getZipFile(zip, path) {
+      if (!path) return null;
+      let clean = path.replace(/^\/+/, '');
+      if (zip.file(clean)) return zip.file(clean);
+      const lower = clean.toLowerCase();
+      const foundKey = Object.keys(zip.files).find(k => k.toLowerCase() === lower);
+      return foundKey ? zip.file(foundKey) : null;
+    }
+
+    function resolvePath(basePath, relativePath) {
+      if (!relativePath) return '';
+      if (relativePath.startsWith('/')) return relativePath.substring(1);
+      const stack = basePath.split('/');
+      stack.pop();
+      const parts = relativePath.split('/');
+      for (let p of parts) {
+        if (p === '.') continue;
+        if (p === '..') {
+          if (stack.length > 0) stack.pop();
+        } else {
+          stack.push(p);
+        }
+      }
+      return stack.join('/');
+    }
+
+    function getNodesByLocalName(parent, localName) {
+      const res = [];
+      if (!parent) return res;
+      const nameLower = localName.toLowerCase();
+      const all = parent.getElementsByTagName('*');
+      for (let i = 0; i < all.length; i++) {
+        if (all[i].localName && all[i].localName.toLowerCase() === nameLower) {
+          res.push(all[i]);
+        }
+      }
+      return res;
+    }
+
+    async function parseRels(zip, relsPath) {
+      const file = getZipFile(zip, relsPath);
+      if (!file) return {};
+      const text = await file.async('text');
+      const doc = new DOMParser().parseFromString(text, 'text/xml');
+      const rels = {};
+      const nodes = getNodesByLocalName(doc, 'relationship');
+      for (let r of nodes) {
+        const id = r.getAttribute('Id');
+        const target = r.getAttribute('Target');
+        if (id && target) rels[id] = target;
+      }
+      return rels;
+    }
+
+    async function getZipDataUrl(zip, path) {
+      const file = getZipFile(zip, path);
+      if (!file) return null;
+      const blob = await file.async('blob');
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    // EXTRACCIÓN DE IMÁGENES DENTRO DE CELDA (EXCEL 365 RICH VALUE) + DIBUJOS FLOTANTES
+    async function extractImagesWithXML(zip) {
+      sheetImagesMap = {};
+
+      const vmToRvIdx = {};
+      const metaFile = getZipFile(zip, 'xl/metadata.xml');
+      if (metaFile) {
+        try {
+          const metaText = await metaFile.async('text');
+          const metaDoc = new DOMParser().parseFromString(metaText, 'text/xml');
+          const bkNodes = getNodesByLocalName(metaDoc, 'bk');
+          for (let i = 0; i < bkNodes.length; i++) {
+            const rvbNodes = getNodesByLocalName(bkNodes[i], 'rvb');
+            if (rvbNodes.length > 0) {
+              const idxAttr = rvbNodes[0].getAttribute('i');
+              if (idxAttr !== null) {
+                vmToRvIdx[i + 1] = parseInt(idxAttr, 10);
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('Error en metadata.xml:', e);
+        }
+      }
+
+      const rvToRelIdx = {};
+      const rvFile = getZipFile(zip, 'xl/richData/rdrichvalue.xml');
+      if (rvFile) {
+        try {
+          const rvText = await rvFile.async('text');
+          const rvDoc = new DOMParser().parseFromString(rvText, 'text/xml');
+          const rvNodes = getNodesByLocalName(rvDoc, 'rv');
+          for (let i = 0; i < rvNodes.length; i++) {
+            const vNodes = getNodesByLocalName(rvNodes[i], 'v');
+            if (vNodes.length > 0) {
+              rvToRelIdx[i] = parseInt(vNodes[0].textContent.trim(), 10);
+            }
+          }
+        } catch (e) {
+          console.warn('Error en rdrichvalue.xml:', e);
+        }
+      }
+
+      const relIdxToRid = {};
+      const rvrFile = getZipFile(zip, 'xl/richData/richValueRel.xml');
+      if (rvrFile) {
+        try {
+          const rvrText = await rvrFile.async('text');
+          const rvrDoc = new DOMParser().parseFromString(rvrText, 'text/xml');
+          const relNodes = getNodesByLocalName(rvrDoc, 'rel');
+          for (let i = 0; i < relNodes.length; i++) {
+            let rId = relNodes[i].getAttribute('r:id') || relNodes[i].getAttribute('id');
+            if (!rId && relNodes[i].attributes) {
+              for (let a of relNodes[i].attributes) {
+                if (a.name.toLowerCase().includes('id')) { rId = a.value; break; }
+              }
+            }
+            if (rId) relIdxToRid[i] = rId;
+          }
+        } catch (e) {
+          console.warn('Error en richValueRel.xml:', e);
+        }
+      }
+
+      const ridToMediaPath = {};
+      const rvrRelsMap = await parseRels(zip, 'xl/richData/_rels/richValueRel.xml.rels');
+      for (let rId in rvrRelsMap) {
+        ridToMediaPath[rId] = resolvePath('xl/richData/richValueRel.xml', rvrRelsMap[rId]);
+      }
+
+      function getMediaPathByVm(vmVal) {
+        const vmNum = parseInt(vmVal, 10);
+        if (isNaN(vmNum)) return null;
+        const rvIdx = (vmToRvIdx[vmNum] !== undefined) ? vmToRvIdx[vmNum] : (vmNum - 1);
+        const relIdx = (rvToRelIdx[rvIdx] !== undefined) ? rvToRelIdx[rvIdx] : rvIdx;
+        const rId = relIdxToRid[relIdx];
+        if (rId) return ridToMediaPath[rId];
+        return null;
+      }
+
+      const mediaCache = {};
+      async function fetchMediaDataUrl(path) {
+        if (!path) return null;
+        if (mediaCache[path]) return mediaCache[path];
+        const dataUrl = await getZipDataUrl(zip, path);
+        if (dataUrl) mediaCache[path] = dataUrl;
+        return dataUrl;
+      }
+
+      const wbFile = getZipFile(zip, 'xl/workbook.xml');
+      if (!wbFile) return;
+      const wbText = await wbFile.async('text');
+      const wbDoc = new DOMParser().parseFromString(wbText, 'text/xml');
+      
+      const wbRelsMap = await parseRels(zip, 'xl/_rels/workbook.xml.rels');
+      const sheetNodes = getNodesByLocalName(wbDoc, 'sheet');
+      const sheetPaths = {};
+      
+      for (let s of sheetNodes) {
+        const name = s.getAttribute('name');
+        let rId = s.getAttribute('r:id') || s.getAttribute('id');
+        if (!rId && s.attributes) {
+          for (let a of s.attributes) {
+            if (a.name.toLowerCase().includes('id')) { rId = a.value; break; }
+          }
+        }
+        if (name && rId && wbRelsMap[rId]) {
+          sheetPaths[name.trim().toUpperCase()] = resolvePath('xl/workbook.xml', wbRelsMap[rId]);
+        }
+      }
+
+      for (let normSheetName in sheetPaths) {
+        sheetImagesMap[normSheetName] = { byRow: {} };
+        const sheetXmlPath = sheetPaths[normSheetName];
+        const sheetXmlFile = getZipFile(zip, sheetXmlPath);
+        if (!sheetXmlFile) continue;
+        
+        const sheetXmlText = await sheetXmlFile.async('text');
+        const sheetDoc = new DOMParser().parseFromString(sheetXmlText, 'text/xml');
+
+        const cNodes = getNodesByLocalName(sheetDoc, 'c');
+        for (let c of cNodes) {
+          const vmVal = c.getAttribute('vm');
+          if (!vmVal) continue;
+          
+          const rRef = c.getAttribute('r');
+          if (!rRef) continue;
+          
+          const rowNum = parseInt(rRef.replace(/[^0-9]/g, ''), 10);
+          
+          const mediaPath = getMediaPathByVm(vmVal);
+          if (mediaPath) {
+            const imgDataUrl = await fetchMediaDataUrl(mediaPath);
+            if (imgDataUrl) {
+              if (!sheetImagesMap[normSheetName].byRow[rowNum]) {
+                sheetImagesMap[normSheetName].byRow[rowNum] = imgDataUrl;
+              }
+            }
+          }
+        }
+
+        const sheetParts = sheetXmlPath.split('/');
+        const sheetFileName = sheetParts.pop();
+        const sheetRelsPath = (sheetParts.length ? sheetParts.join('/') + '/' : '') + '_rels/' + sheetFileName + '.rels';
+        const sheetRelsMap = await parseRels(zip, sheetRelsPath);
+        
+        let drawingXmlPath = null;
+        const drawingNodes = getNodesByLocalName(sheetDoc, 'drawing');
+        for (let d of drawingNodes) {
+          let rId = d.getAttribute('r:id') || d.getAttribute('id');
+          if (!rId && d.attributes) {
+            for (let a of d.attributes) {
+              if (a.name.toLowerCase().includes('id')) { rId = a.value; break; }
+            }
+          }
+          if (rId && sheetRelsMap[rId]) {
+            drawingXmlPath = resolvePath(sheetXmlPath, sheetRelsMap[rId]);
+            break;
+          }
+        }
+        
+        if (drawingXmlPath) {
+          const drawingParts = drawingXmlPath.split('/');
+          const drawingFileName = drawingParts.pop();
+          const drawingRelsPath = (drawingParts.length ? drawingParts.join('/') + '/' : '') + '_rels/' + drawingFileName + '.rels';
+          
+          const drawingRelsMap = await parseRels(zip, drawingRelsPath);
+          const drawingXmlFile = getZipFile(zip, drawingXmlPath);
+          
+          if (drawingXmlFile) {
+            const drawingXmlText = await drawingXmlFile.async('text');
+            const drawingDoc = new DOMParser().parseFromString(drawingXmlText, 'text/xml');
+            
+            const anchors = [
+              ...getNodesByLocalName(drawingDoc, 'twoCellAnchor'),
+              ...getNodesByLocalName(drawingDoc, 'oneCellAnchor'),
+              ...getNodesByLocalName(drawingDoc, 'absoluteAnchor')
+            ];
+
+            for (let anchor of anchors) {
+              const fromNodes = getNodesByLocalName(anchor, 'from');
+              let rowIndex = -1;
+
+              if (fromNodes.length > 0) {
+                const rowNodes = getNodesByLocalName(fromNodes[0], 'row');
+                if (rowNodes.length > 0) rowIndex = parseInt(rowNodes[0].textContent.trim(), 10);
+              }
+              
+              const blipNodes = getNodesByLocalName(anchor, 'blip');
+              if (blipNodes.length === 0) continue;
+              
+              let embedId = null;
+              for (let a of blipNodes[0].attributes) {
+                if (a.name.toLowerCase().includes('embed') || a.name.toLowerCase().includes('link')) {
+                  embedId = a.value;
+                  break;
+                }
+              }
+              
+              if (embedId && drawingRelsMap[embedId] && rowIndex >= 0) {
+                const mediaPath = resolvePath(drawingXmlPath, drawingRelsMap[embedId]);
+                const imgDataUrl = await fetchMediaDataUrl(mediaPath);
+                if (imgDataUrl) {
+                  const excelRow1 = rowIndex + 1;
+                  if (!sheetImagesMap[normSheetName].byRow[excelRow1]) {
+                    sheetImagesMap[normSheetName].byRow[excelRow1] = imgDataUrl;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    function getBestImageForProduct(sheetName, excelRow) {
+      const normSheet = sheetName.trim().toUpperCase();
+      const sheetData = sheetImagesMap[normSheet];
+      if (!sheetData || !sheetData.byRow) return null;
+
+      const rowsToTry = [excelRow, excelRow + 1, excelRow - 1];
+      for (let r of rowsToTry) {
+        if (sheetData.byRow[r]) {
+          return sheetData.byRow[r];
+        }
+      }
+      return null;
+    }
+
+    async function processExcel(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      document.getElementById('fileName').innerText = file.name;
+      rawCatalogData = [];
+      sheetImagesMap = {};
+
+      try {
+        const zip = await JSZip.loadAsync(file);
+        await extractImagesWithXML(zip);
+      } catch (err) {
+        console.warn('Error en descompresión del archivo:', err);
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        rawCatalogData = [];
+
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        workbook.SheetNames.forEach((sheetName) => {
+          const worksheet = workbook.Sheets[sheetName];
+          const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '', blankrows: true });
+
+          if (!rows || rows.length < 2) return;
+
+          const categoriaSolapa = sheetName.trim();
+          const range = worksheet['!ref'] ? XLSX.utils.decode_range(worksheet['!ref']) : { s: { r: 0, c: 0 } };
+
+          let headerIdx = -1;
+          let colCod = -1, colProd = -1, colPrecio = -1, colDesc = -1;
+
+          for (let i = 0; i < Math.min(15, rows.length); i++) {
+            if (!rows[i] || rows[i].length === 0) continue;
+            
+            const rowCells = rows[i].map(c => String(c).toUpperCase().trim());
+            const rowStr = rowCells.join(' ');
+
+            if (rowStr.includes('COD') || rowStr.includes('PRODUCTO') || rowStr.includes('ARTICULO') || rowStr.includes('DETALLE')) {
+              headerIdx = i;
+              rowCells.forEach((cell, idx) => {
+                if (cell.includes('COD')) colCod = idx;
+                else if (cell.includes('PRODUCTO') || cell.includes('ARTICULO') || cell.includes('DETALLE') || cell.includes('DENOMINACION')) colProd = idx;
+                else if (cell.includes('PRECIO') || cell.includes('VENTA') || cell.includes('PVP') || cell.includes('P.V.P') || cell.includes('IMPORTE')) colPrecio = idx;
+                else if (cell.includes('DESC') || cell.includes('OBS')) colDesc = idx;
+              });
+              break;
+            }
+          }
+
+          if (colCod === -1) colCod = 0;
+          if (colProd === -1) colProd = (colCod === 0) ? 2 : 1;
+          if (colPrecio === -1) colPrecio = 5;
+
+          const startRow = headerIdx !== -1 ? headerIdx + 1 : 0;
+
+          for (let i = startRow; i < rows.length; i++) {
+            const row = rows[i];
+            const excelRow = range.s.r + i + 1;
+
+            if (!row || row.length === 0) continue;
+            const isBlank = row.every(c => c === null || c === undefined || String(c).trim() === '');
+            if (isBlank) continue;
+
+            const valColF = row[5] !== undefined ? String(row[5]).trim().toUpperCase() : '';
+            const rowFullText = row.map(c => String(c).toUpperCase()).join(' ');
+
+            if (valColF.includes('SIN STOCK') || rowFullText.includes('SIN STOCK')) {
+              continue;
+            }
+
+            const codVal = row[colCod] !== undefined ? String(row[colCod]).trim() : '';
+            const prodVal = row[colProd] !== undefined ? String(row[colProd]).trim() : '';
+            const descVal = (colDesc !== -1 && row[colDesc] !== undefined) ? String(row[colDesc]).trim() : '';
+            const precioRaw = row[colPrecio] !== undefined ? row[colPrecio] : null;
+
+            const upperProd = prodVal.toUpperCase();
+            if (!prodVal || upperProd === 'PRODUCTO' || upperProd === 'ARTICULO' || upperProd === 'DETALLE' || upperProd === 'NONE') {
+              continue;
+            }
+
+            const precioNum = parseValidPrice(precioRaw);
+            if (precioNum === null) {
+              continue;
+            }
+
+            const itemImage = getBestImageForProduct(categoriaSolapa, excelRow);
+
+            rawCatalogData.push({
+              categoria: categoriaSolapa,
+              codigo: codVal,
+              producto: prodVal,
+              precio: `$ ${precioNum.toLocaleString('es-AR')}`,
+              descripcion: descVal,
+              imagen: itemImage
+            });
+          }
+        });
+
+        setupCategoryTabs();
+        renderCatalog();
+        document.getElementById('filterSection').style.display = 'block';
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+
+    function setupCategoryTabs() {
+      const categories = ['TODAS', ...new Set(rawCatalogData.map(item => item.categoria))];
+      const container = document.getElementById('categoriesTabs');
+      container.innerHTML = '';
+
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = `tab-btn ${cat === activeCategory ? 'active' : ''}`;
+        btn.innerText = cat;
+        btn.onclick = () => {
+          activeCategory = cat;
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          filterProducts();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function filterProducts() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      
+      const filtered = rawCatalogData.filter(item => {
+        const matchesCat = (activeCategory === 'TODAS' || item.categoria === activeCategory);
+        const matchesSearch = item.producto.toLowerCase().includes(searchTerm) || 
+                              item.codigo.toLowerCase().includes(searchTerm) ||
+                              item.descripcion.toLowerCase().includes(searchTerm);
+        return matchesCat && matchesSearch;
+      });
+
+      renderCatalog(filtered);
+    }
+
+    function sendWhatsAppOrder(codigo, producto, precio, categoria) {
+      const rawPhone = document.getElementById('waPhoneInput').value.replace(/[^0-9]/g, '');
+      const phone = rawPhone || '5491112345678';
+      
+      const msg = `Hola! Quisiera encargar/consultar sobre el siguiente producto:\n\n` +
+                  `📌 *Categoría:* ${categoria}\n` +
+                  `🏷️ *Código:* ${codigo}\n` +
+                  `📦 *Producto:* ${producto}\n` +
+                  `💰 *Precio:* ${precio}\n\n` +
+                  `¿Tienen disponibilidad? Muchas gracias!`;
+
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    function renderCatalog(items = rawCatalogData) {
+      const container = document.getElementById('catalogContainer');
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No se encontraron artículos</h3>
+            <p>Intenta cambiando la categoría o el término de búsqueda.</p>
+          </div>`;
+        return;
+      }
+
+      const grouped = items.reduce((acc, item) => {
+        if (!acc[item.categoria]) acc[item.categoria] = [];
+        acc[item.categoria].push(item);
+        return acc;
+      }, {});
+
+      let html = '';
+      let cardGlobalIndex = 0;
+
+      for (let catName in grouped) {
+        html += `
+          <div class="category-section">
+            <h2 class="category-header">${catName}</h2>
+            <div class="catalog-grid">
+        `;
+
+        grouped[catName].forEach((item) => {
+          const cardId = `card-${cardGlobalIndex++}`;
+          const imgHtml = item.imagen ? 
+            `<img src="${item.imagen}" alt="${item.producto}">` : 
+            `<div class="no-img">📷 Sin Imagen Incrustada</div>`;
+
+          html += `
+            <div class="product-card" id="${cardId}">
+              <span class="card-badge">${item.categoria}</span>
+              <div class="img-container">
+                ${imgHtml}
+              </div>
+              <div class="card-body">
+                <div class="product-code">${item.codigo}</div>
+                <div class="product-title">${item.producto}</div>
+                <div class="product-desc">${item.descripcion || ''}</div>
+                <div class="price-tag">${item.precio}</div>
+              </div>
+              <div class="card-footer">
+                <button class="btn btn-whatsapp btn-card-wa" onclick="sendWhatsAppOrder('${item.codigo}', '${item.producto.replace(/'/g, "\\'")}', '${item.precio}', '${item.categoria.replace(/'/g, "\\'")}')">
+                  📲 Pedir por WhatsApp
+                </button>
+                <button class="btn btn-jpg" onclick="downloadCardJPG('${cardId}', '${item.codigo || item.producto}')">
+                  🖼️ Descargar JPG
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // EXPORTAR JPGs INDIVIDUALES EN LOTE ZIP
+    async function exportCategoryJPGsZip() {
+      const itemsToRender = activeCategory === 'TODAS' ? 
+        rawCatalogData : rawCatalogData.filter(i => i.categoria === activeCategory);
+
+      if (!itemsToRender || itemsToRender.length === 0) {
+        alert('Por favor carga un archivo Excel con productos válidos antes de exportar.');
+        return;
+      }
+
+      const modal = document.getElementById('pdfLoadingModal');
+      const modalText = document.getElementById('pdfLoadingText');
+      modal.style.display = 'flex';
+
+      const zip = new JSZip();
+      const folderName = `JPGs_${activeCategory.replace(/[^a-zA-Z0-9]/g, '_')}`;
+      const imgFolder = zip.folder(folderName);
+
+      const tempContainer = document.createElement('div');
+      tempContainer.style.cssText = 'position: absolute; left: -9999px; top: 0; width: 380px;';
+      document.body.appendChild(tempContainer);
+
+      for (let i = 0; i < itemsToRender.length; i++) {
+        const item = itemsToRender[i];
+        modalText.innerText = `Generando imagen ${i + 1} de ${itemsToRender.length}...`;
+
+        const card = document.createElement('div');
+        card.style.cssText = `
+          width: 360px; background: #ffffff; border: 1px solid #cbd5e1;
+          border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
+          justify-content: space-between; box-sizing: border-box; padding: 15px;
+          position: relative; font-family: 'Segoe UI', Roboto, sans-serif;
+        `;
+
+        const imgHtml = item.imagen ? 
+          `<img src="${item.imagen}" style="max-width: 90%; max-height: 90%; width: auto; height: auto; margin: auto; display: block; object-fit: contain;">` : 
+          `<div style="color: #64748b; font-size: 13px; text-align: center; padding: 20px;">📷 Sin Imagen</div>`;
+
+        card.innerHTML = `
+          <span style="position: absolute; top: 10px; left: 10px; background: rgba(15,23,42,0.85); color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase;">${item.categoria}</span>
+          <div style="width: 100%; height: 180px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; border-radius: 8px; overflow: hidden;">
+            ${imgHtml}
+          </div>
+          <div style="padding: 12px 0 0 0; display: flex; flex-direction: column; flex-grow: 1;">
+            <div style="font-size: 12px; color: #2563eb; font-weight: 700; margin-bottom: 4px;">${item.codigo}</div>
+            <div style="font-size: 15px; font-weight: 600; color: #0f172a; margin-bottom: 6px; line-height: 1.25;">${item.producto}</div>
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 10px; white-space: pre-line;">${item.descripcion || ''}</div>
+            <div style="font-size: 18px; font-weight: 800; color: #1e293b;">${item.precio}</div>
+          </div>
+        `;
+
+        tempContainer.appendChild(card);
+
+        const canvas = await html2canvas(card, {
+          scale: 3,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          allowTaint: true,
+          logging: false
+        });
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        const base64Data = dataUrl.replace(/^data:image\/jpeg;base64,/, '');
+
+        const safeName = (item.codigo || item.producto).replace(/[^a-zA-Z0-9_-]/g, '_');
+        const fileName = `${i + 1}_${safeName}.jpg`;
+
+        imgFolder.file(fileName, base64Data, { base64: true });
+        tempContainer.removeChild(card);
+      }
+
+      document.body.removeChild(tempContainer);
+      modalText.innerText = 'Comprimiendo archivo ZIP...';
+
+      const content = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(content);
+      a.download = `VICMO_JPGs_${activeCategory.replace(/[^a-zA-Z0-9]/g, '_')}.zip`;
+      a.click();
+
+      modal.style.display = 'none';
+    }
+
+    // EXPORTAR CATÁLOGO HTML ONLINE AUTOCONTENIDO
+    function exportOnlineCatalogHTML() {
+      if (!rawCatalogData || rawCatalogData.length === 0) {
+        alert('Por favor, carga primero un archivo Excel para generar el catálogo web.');
+        return;
+      }
+
+      const rawPhone = document.getElementById('waPhoneInput').value.replace(/[^0-9]/g, '') || '5491112345678';
+      const catalogJsonStr = JSON.stringify(rawCatalogData);
+      const logoData = customLogoBase64;
+
+      const htmlContent = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VICMO ELECTRODOMESTICOS - Catálogo Online</title>
+  <style>
+    :root {
+      --primary: #0f172a;
+      --accent: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --whatsapp: #25d366;
+      --whatsapp-hover: #128c7e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px; }
+    header {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white; padding: 25px 30px; border-radius: 16px; margin-bottom: 25px;
+      display: flex; align-items: center; gap: 20px;
+    }
+    .logo-img { height: 70px; width: auto; object-fit: contain; }
+    .header-titles h1 { font-size: 2.2rem; font-weight: 800; text-transform: uppercase; }
+    .header-titles p { color: #94a3b8; font-size: 1rem; }
+    .search-box {
+      width: 100%; padding: 14px 20px; border-radius: 10px; border: 1px solid var(--border);
+      font-size: 1rem; margin-bottom: 15px; outline: none;
+    }
+    .categories-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px; }
+    .tab-btn {
+      padding: 9px 18px; border-radius: 20px; background-color: #e2e8f0; color: var(--text-muted);
+      border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem;
+    }
+    .tab-btn.active, .tab-btn:hover { background-color: var(--accent); color: white; }
+    .category-section { margin-bottom: 30px; }
+    .category-header {
+      font-size: 1.3rem; font-weight: 700; color: var(--primary); padding-bottom: 6px;
+      margin-bottom: 15px; border-bottom: 3px solid var(--accent); text-transform: uppercase;
+    }
+    .catalog-grid { display: flex; flex-wrap: wrap; gap: 20px; }
+    .product-card {
+      background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border);
+      overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;
+      width: calc(33.333% - 14px); min-width: 250px; box-sizing: border-box; position: relative;
+    }
+    @media (max-width: 768px) { .product-card { width: 100%; } }
+    .card-badge {
+      position: absolute; top: 10px; left: 10px; background: rgba(15, 23, 42, 0.85);
+      color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+    }
+    .img-container {
+      width: 100%; height: 180px; background-color: #f1f5f9; display: flex; align-items: center;
+      justify-content: center; overflow: hidden;
+    }
+    .img-container img { max-width: 90%; max-height: 90%; object-fit: contain; }
+    .card-body { padding: 12px 15px; display: flex; flex-direction: column; flex-grow: 1; }
+    .product-code { font-size: 0.8rem; color: var(--accent); font-weight: 700; }
+    .product-title { font-size: 1rem; font-weight: 600; color: var(--text); margin: 4px 0; }
+    .product-desc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px; white-space: pre-line; max-height: 100px; overflow-y: auto; }
+    .price-tag { font-size: 1.25rem; font-weight: 800; color: #1e293b; }
+    .card-footer { padding: 10px 12px; background-color: #f8fafc; border-top: 1px solid var(--border); }
+    .btn-wa {
+      width: 100%; padding: 10px; border-radius: 8px; border: none; background-color: var(--whatsapp);
+      color: white; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem;
+    }
+    .btn-wa:hover { background-color: var(--whatsapp-hover); }
+  </style>
+</head>
+<body>
+  <header>
+    <img class="logo-img" src="${logoData}" alt="VICMO Logo">
+    <div class="header-titles">
+      <h1>VICMO ELECTRODOMÉSTICOS</h1>
+      <p>Catálogo Oficial de Productos y Artículos del Hogar</p>
+    </div>
+  </header>
+
+  <input type="text" id="searchInput" class="search-box" placeholder="Buscar por código, nombre o descripción..." oninput="filterProducts()">
+  <div class="categories-tabs" id="categoriesTabs"></div>
+  <div id="catalogContainer"></div>
+
+  <script>
+    const catalogData = ${catalogJsonStr};
+    const waPhone = "${rawPhone}";
+    let activeCategory = 'TODAS';
+
+    function init() {
+      setupTabs();
+      renderCatalog(catalogData);
+    }
+
+    function setupTabs() {
+      const categories = ['TODAS', ...new Set(catalogData.map(item => item.categoria))];
+      const container = document.getElementById('categoriesTabs');
+      container.innerHTML = '';
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = \`tab-btn \${cat === activeCategory ? 'active' : ''}\`;
+        btn.innerText = cat;
+        btn.onclick = () => {
+          activeCategory = cat;
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          filterProducts();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function filterProducts() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = catalogData.filter(item => {
+        const matchesCat = (activeCategory === 'TODAS' || item.categoria === activeCategory);
+        const matchesSearch = item.producto.toLowerCase().includes(search) ||
+                              item.codigo.toLowerCase().includes(search) ||
+                              item.descripcion.toLowerCase().includes(search);
+        return matchesCat && matchesSearch;
+      });
+      renderCatalog(filtered);
+    }
+
+    function sendWhatsApp(codigo, producto, precio, categoria) {
+      const msg = \`Hola! Quisiera encargar/consultar sobre el siguiente producto:\\n\\n\` +
+                  \`📌 *Categoría:* \${categoria}\\n\` +
+                  \`🏷️ *Código:* \${codigo}\\n\` +
+                  \`📦 *Producto:* \${producto}\\n\` +
+                  \`💰 *Precio:* \${precio}\\n\\n\` +
+                  \`¿Tienen disponibilidad? Muchas gracias!\`;
+      window.open(\`https://wa.me/\${waPhone}?text=\${encodeURIComponent(msg)}\`, '_blank');
+    }
+
+    function renderCatalog(items) {
+      const container = document.getElementById('catalogContainer');
+      if (!items || items.length === 0) {
+        container.innerHTML = '<p style="text-align:center; padding:40px;">No se encontraron productos.</p>';
+        return;
+      }
+      const grouped = items.reduce((acc, item) => {
+        if (!acc[item.categoria]) acc[item.categoria] = [];
+        acc[item.categoria].push(item);
+        return acc;
+      }, {});
+
+      let html = '';
+      for (let cat in grouped) {
+        html += \`<div class="category-section"><h2 class="category-header">\${cat}</h2><div class="catalog-grid">\`;
+        grouped[cat].forEach(item => {
+          const imgHtml = item.imagen ? \`<img src="\${item.imagen}" alt="\${item.producto}">\` : '<div style="color:#64748b; font-size:0.85rem;">📷 Sin Imagen</div>';
+          html += \`
+            <div class="product-card">
+              <span class="card-badge">\${item.categoria}</span>
+              <div class="img-container">\${imgHtml}</div>
+              <div class="card-body">
+                <div class="product-code">\${item.codigo}</div>
+                <div class="product-title">\${item.producto}</div>
+                <div class="product-desc">\${item.descripcion || ''}</div>
+                <div class="price-tag">\${item.precio}</div>
+              </div>
+              <div class="card-footer">
+                <button class="btn-wa" onclick="sendWhatsApp('\${item.codigo}', '\${item.producto.replace(/'/g, "\\\\'")}', '\${item.precio}', '\${item.categoria.replace(/'/g, "\\\\'")}')">
+                  📲 Encargar por WhatsApp
+                </button>
+              </div>
+            </div>
+          \`;
+        });
+        html += '</div></div>';
+      }
+      container.innerHTML = html;
+    }
+
+    init();
+  <\/script>
+</body>
+</html>`;
+
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'VICMO_Catalogo_Online.html';
+      link.click();
+    }
+
+    async function exportToPDF() {
+      const itemsToRender = activeCategory === 'TODAS' ? 
+        rawCatalogData : rawCatalogData.filter(i => i.categoria === activeCategory);
+
+      if (!itemsToRender.length) {
+        alert('Por favor carga un archivo Excel con productos válidos.');
+        return;
+      }
+
+      const modal = document.getElementById('pdfLoadingModal');
+      const modalText = document.getElementById('pdfLoadingText');
+      modal.style.display = 'flex';
+
+      const pdfContainer = document.createElement('div');
+      pdfContainer.style.cssText = 'position: absolute; left: -9999px; top: 0; width: 794px;';
+      document.body.appendChild(pdfContainer);
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const grouped = itemsToRender.reduce((acc, item) => {
+        if (!acc[item.categoria]) acc[item.categoria] = [];
+        acc[item.categoria].push(item);
+        return acc;
+      }, {});
+
+      let pages = [];
+      const CARD_HEIGHT_PX = 330; 
+      const ROW_GAP_PX = 14;
+      const PAGE_A4_MAX_HEIGHT = 1047; 
+
+      function createNewA4Page(pageNum) {
+        const pageDiv = document.createElement('div');
+        pageDiv.style.cssText = `
+          width: 794px; height: 1122px; background: #ffffff; 
+          padding: 24px 24px 75px 24px; box-sizing: border-box; overflow: hidden;
+          position: relative; display: flex; flex-direction: column;
+        `;
+
+        const header = document.createElement('div');
+        header.style.cssText = `
+          background: linear-gradient(135deg, #0f172a, #1e293b);
+          color: white; padding: 16px 20px; border-radius: 12px;
+          margin-bottom: 14px; flex-shrink: 0;
+          display: flex; justify-content: space-between; align-items: center;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        `;
+        header.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="${customLogoBase64}" style="height: 55px; width: auto; object-fit: contain; border-radius: 6px;">
+            <div>
+              <h1 style="font-size: 21px; font-weight: 800; letter-spacing: 1px; margin: 0; text-transform: uppercase;">VICMO ELECTRODOMÉSTICOS</h1>
+              <p style="color: #94a3b8; font-size: 11px; margin: 3px 0 0 0; font-weight: 500;">Catálogo Oficial de Productos y Artículos del Hogar</p>
+            </div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15);">
+            Pág. ${pageNum}
+          </div>
+        `;
+        pageDiv.appendChild(header);
+
+        let usedHeight = 24 + 75 + 115;
+
+        const content = document.createElement('div');
+        content.className = 'page-content';
+        content.style.cssText = 'flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden;';
+        pageDiv.appendChild(content);
+
+        pdfContainer.appendChild(pageDiv);
+        
+        const pageObj = { element: pageDiv, pageNum, usedHeight };
+        pages.push(pageObj);
+        return pageObj;
+      }
+
+      let currentPageObj = createNewA4Page(1);
+
+      for (let catName in grouped) {
+        const catItems = grouped[catName];
+        let categoryHeaderNeeded = true;
+        let currentGrid = null;
+        let itemsInCurrentRow = 0;
+
+        for (let i = 0; i < catItems.length; i++) {
+          const item = catItems[i];
+
+          const willNeedNewRow = (itemsInCurrentRow === 0 || itemsInCurrentRow === 2);
+          const headerHeightToFit = categoryHeaderNeeded ? 42 : 0;
+          const rowHeightToFit = willNeedNewRow ? (CARD_HEIGHT_PX + ROW_GAP_PX) : 0;
+
+          if (currentPageObj.usedHeight + headerHeightToFit + rowHeightToFit > PAGE_A4_MAX_HEIGHT) {
+            currentPageObj = createNewA4Page(pages.length + 1);
+            categoryHeaderNeeded = true;
+            itemsInCurrentRow = 0;
+            currentGrid = null;
+          }
+
+          if (categoryHeaderNeeded) {
+            const catHeader = document.createElement('div');
+            catHeader.style.cssText = `
+              font-size: 17px; font-weight: 700; color: #1e293b; 
+              padding-bottom: 4px; margin: 4px 0 10px 0; 
+              border-bottom: 3px solid #2563eb; text-transform: uppercase;
+              width: 100%; flex-shrink: 0;
+            `;
+            catHeader.innerText = catName;
+            currentPageObj.element.querySelector('.page-content').appendChild(catHeader);
+
+            currentGrid = document.createElement('div');
+            currentGrid.style.cssText = 'display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; justify-content: space-between; flex-shrink: 0;';
+            currentPageObj.element.querySelector('.page-content').appendChild(currentGrid);
+
+            currentPageObj.usedHeight += 42;
+            categoryHeaderNeeded = false;
+            itemsInCurrentRow = 0;
+          }
+
+          const card = createFixedCardForPDF(item, CARD_HEIGHT_PX);
+          currentGrid.appendChild(card);
+          
+          itemsInCurrentRow++;
+
+          if (itemsInCurrentRow === 1) {
+            currentPageObj.usedHeight += (CARD_HEIGHT_PX + ROW_GAP_PX);
+          } else if (itemsInCurrentRow === 2) {
+            itemsInCurrentRow = 0;
+          }
+        }
+      }
+
+      for (let i = 0; i < pages.length; i++) {
+        modalText.innerText = `Generando página ${i + 1} de ${pages.length}...`;
+        const pageEl = pages[i].element;
+
+        const canvas = await html2canvas(pageEl, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          width: 794,
+          height: 1122
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        if (i > 0) doc.addPage();
+        doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+      }
+
+      doc.save(`VICMO_Catalogo_${activeCategory}.pdf`);
+
+      document.body.removeChild(pdfContainer);
+      modal.style.display = 'none';
+    }
+
+    function createFixedCardForPDF(item, fixedHeight) {
+      const card = document.createElement('div');
+      card.style.cssText = `
+        width: 364px; height: ${fixedHeight}px; background: #ffffff; border: 1px solid #cbd5e1;
+        border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;
+        justify-content: space-between; box-sizing: border-box; padding: 10px 12px;
+        position: relative; flex-shrink: 0;
+      `;
+
+      const imgHtml = item.imagen ? 
+        `<img src="${item.imagen}" style="max-width: 90%; max-height: 90%; width: auto; height: auto; margin: auto; display: block; object-fit: contain;">` : 
+        `<div style="color: #64748b; font-size: 12px;">📷 Sin Imagen</div>`;
+
+      let descText = item.descripcion || '';
+      if (descText.length > 170) {
+        descText = descText.substring(0, 165) + '...';
+      }
+
+      card.innerHTML = `
+        <span style="position: absolute; top: 8px; left: 8px; background: rgba(15,23,42,0.85); color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; z-index: 2;">${item.categoria}</span>
+        <div style="width: 100%; height: 150px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; border-radius: 6px; overflow: hidden; flex-shrink: 0;">
+          ${imgHtml}
+        </div>
+        <div style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; margin-top: 6px; overflow: hidden;">
+          <div>
+            <div style="font-size: 11px; color: #2563eb; font-weight: 700;">${item.codigo}</div>
+            <div style="font-size: 12.5px; font-weight: 700; color: #0f172a; margin: 2px 0; line-height: 1.2; max-height: 32px; overflow: hidden;">${item.producto}</div>
+            <div style="font-size: 9.5px; color: #475569; white-space: pre-line; line-height: 1.2; max-height: 50px; overflow: hidden;">${descText}</div>
+          </div>
+          <div style="font-size: 16px; font-weight: 800; color: #1e293b; margin-top: 2px;">${item.precio}</div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    function downloadCardJPG(cardId, fileName) {
+      const cardElement = document.getElementById(cardId);
+      const btn = cardElement.querySelector('.card-footer');
+      
+      btn.style.visibility = 'hidden';
+
+      html2canvas(cardElement, {
+        scale: 3,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        allowTaint: true,
+        logging: false
+      }).then(canvas => {
+        btn.style.visibility = 'visible';
+        
+        const link = document.createElement('a');
+        link.download = `VICMO_${fileName.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        link.click();
+      }).catch(err => {
+        btn.style.visibility = 'visible';
+        console.error('Error al generar la imagen JPG:', err);
+      });
+    }
+  </script>
+</body>
+</html>
